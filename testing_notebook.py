@@ -70,6 +70,38 @@ def bootstrap_binomial_hypothesis_test(dist_1, dist_2, num_simulations=10000):
     return p_value
 
 
+def bootstrap_hypothesis_test(dist_1, dist_2, num_simulations=10000):
+    '''
+    This function takes in two distributions and performs
+    multiple bootstrap samples of one datapoint from each distribution.
+    This function then marks whether the dist_1 bootstrap value is larger, equal,
+    or smaller than the dist_2 bootstrap value. These comparison results are
+    tallied across all the bootstrap samples. The proportion of these samples
+    in which sample(dist_1) < sample(dist_2) is calculated as our p-value 
+    (see: https://dataz4s.com/statistics/two-sample-bootstrap-hypothesis-testing/)
+    INPUT
+        dist_1: a list of numbers
+        dist_2: also a list of numbers
+        num_simulations: Integer. The number of bootstrap samples to take
+            when comparing the two distributions.
+    OUTPUT
+        p_value: Float. The proportion of samples for which sample(dist_2) > sample(dist_1).
+    '''
+    result_list = []
+    samples_1 = np.random.choice(dist_1, num_simulations)
+    samples_2 = np.random.choice(dist_2, num_simulations)
+
+    for i in range(num_simulations):
+        if samples_2[i] > samples_1[i]:
+            result_list.append(1)
+        else:
+            result_list.append(0)
+
+    p_value = np.sum(result_list) / len(result_list)
+
+    return p_value
+
+
 # -
 
 d1 = np.random.sample(2000)
@@ -81,3 +113,15 @@ d1 = np.random.choice([10,11,12,10,11,12,10,11])
 d2 = np.random.choice([9,10,11,12,9,10,11,12])
 p_value = bootstrap_binomial_hypothesis_test(d1, d2, num_simulations=10000)
 print(p_value)
+
+d1 = np.random.sample(2000)
+d2 = np.random.sample(2500)
+p_value = bootstrap_hypothesis_test(d1, d2, num_simulations=10000)
+print(p_value)
+
+d1 = np.random.choice([10,11,12,10,11,12,10,11])
+d2 = np.random.choice([9,10,11,12,9,10,11,12])
+p_value = bootstrap_hypothesis_test(d1, d2, num_simulations=10000)
+print(p_value)
+
+
